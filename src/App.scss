@@ -1,0 +1,896 @@
+$green: #4ded30;
+$bg-black: rgb(26, 26, 26);
+$input-black: #303030;
+$white: rgb(255, 255, 255, 0.87);
+$border-black: #404040;
+$modal-black: #191919;
+$black-shadow: rgba(0, 0, 0, 0.08) 0px 2px 4px, rgba(0, 0, 0, 0.08) 0px 4px 8px,
+  rgba(0, 0, 0, 0.08) 0px 6px 12px;
+$white-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+body {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  &::-webkit-scrollbar {
+    width: 1em;
+  }
+  &:has(.App.dark) {
+    &::-webkit-scrollbar-track {
+      background: $bg-black;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: $border-black;
+    }
+  }
+  &::-webkit-scrollbar-track {
+    scrollbar-color: auto;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: lightgray;
+  }
+  &.activeModal {
+    overflow-y: hidden;
+  }
+}
+
+.App {
+  height: 100vh;
+  position: relative;
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    transition: background-color 9999s ease-in-out 0s;
+    -webkit-text-fill-color: black;
+    caret-color: black;
+  }
+  &:has(.todosWrap) {
+    height: calc(100vh - 65px);
+    @media (max-width: 1175px) {
+      height: calc(100vh - 130px);
+    }
+    @media (max-width: 775px) {
+      height: calc(100vh - 185px);
+    }
+  }
+  .arrowToTop {
+    cursor: pointer;
+    position: fixed;
+    display: inline-block;
+    right: 10px;
+    bottom: 10px;
+    z-index: 10;
+    svg {
+      background-color: inherit;
+      color: $green;
+    }
+  }
+
+  &.dark {
+    background-color: $bg-black;
+    color: $white;
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+      -webkit-text-fill-color: $white;
+      caret-color: $white;
+    }
+    .headerWrap {
+      background-color: $bg-black;
+      border-bottom: 1px solid $border-black;
+      box-shadow: $black-shadow;
+      .themeColorWrap {
+        &:hover {
+          background-color: $border-black;
+        }
+      }
+    }
+    .searchWrap {
+      background-color: $input-black;
+      color: $white;
+      box-shadow: $black-shadow;
+
+      input {
+        background-color: $input-black;
+        color: $white;
+      }
+      .magnifier {
+        svg {
+          color: $white;
+        }
+      }
+    }
+    .todosWrap {
+      background-color: $bg-black;
+      .addTask {
+        background-color: $input-black;
+        border: 1px solid $input-black;
+        color: $white;
+        box-shadow: $black-shadow;
+      }
+
+      .addTask {
+        &:focus {
+          border: 1px solid $green;
+        }
+        &.error {
+          border: red 1px solid;
+        }
+      }
+      .filters > .filter {
+        color: $white;
+      }
+      .taskLine {
+        background-color: $input-black;
+        color: $white;
+        box-shadow: $black-shadow;
+        &.done {
+          &::after {
+            background-color: rgba(0, 0, 0, 0.35);
+          }
+        }
+      }
+    }
+    .modal {
+      background-color: $modal-black;
+      &::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        background-color: $border-black;
+        border: 2px solid $modal-black;
+      }
+      .input {
+        box-shadow: $black-shadow;
+        background-color: $input-black;
+        color: $white;
+      }
+      .cut {
+        background-color: $modal-black;
+      }
+      .input {
+        &.date {
+          color-scheme: dark;
+        }
+      }
+      .showWrap {
+        .taskDate {
+          box-shadow: $black-shadow;
+          border-bottom: 1px solid $border-black;
+        }
+      }
+    }
+  }
+}
+
+.headerWrap {
+  min-height: 65px;
+  box-sizing: border-box;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 0 15%;
+  background-color: white;
+  z-index: 10;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-gap: 20px;
+  align-items: center;
+  @media (max-width: 1345px) {
+    padding: 0 10%;
+  }
+  @media (max-width: 1175px) {
+    padding: 15px 10%;
+    height: 130px;
+  }
+  @media (max-width: 775px) {
+    height: 185px;
+  }
+  .searchWrap {
+    width: 300px;
+    justify-self: center;
+  }
+  .headerLogo {
+    font-weight: 700;
+    font-size: 1.7rem;
+    justify-self: flex-start;
+    @media (max-width: 775px) {
+      justify-self: center;
+    }
+    & > span:nth-child(2) {
+      color: $green;
+    }
+  }
+  .headerBtnAuthWrap {
+    display: flex;
+    align-items: center;
+    justify-self: flex-end;
+    @media (max-width: 1175px) {
+      &:has(.logout) {
+        justify-self: flex-start;
+      }
+    }
+    @media (max-width: 775px) {
+      &:has(.logout) {
+        justify-self: center;
+      }
+      justify-self: center;
+    }
+    .themeColorWrap {
+      justify-content: center;
+      display: flex;
+      align-items: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      &:hover {
+        background-color: lightgray;
+      }
+    }
+
+    .headerBtnAuth {
+      margin-left: 15px;
+      cursor: pointer;
+      background-color: $green;
+      width: max-content;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-weight: 500;
+      transition: transform 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      &:not(.logout):hover {
+        //если нету доп класса, то будет увеличение кнопки
+        transform: scale(1.1);
+      }
+      &.logout {
+        cursor: default;
+        div {
+          max-width: 100px;
+          overflow: hidden;
+        }
+        svg {
+          cursor: pointer;
+          transition: transform 0.2s;
+          &:hover {
+            transform: scale(0.9);
+          }
+        }
+      }
+      @media (max-width: 585px) {
+        justify-self: center;
+      }
+    }
+  }
+}
+
+.modalWrap {
+  position: fixed;
+  z-index: 12;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  .modal {
+    overflow: hidden;
+    overflow-y: auto;
+    position: fixed;
+    height: 500px;
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+      border-radius: 10px;
+    }
+    &::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+      background-color: lightgray;
+      border: 2px solid white;
+    }
+    &::-webkit-scrollbar-track-piece:start {
+      background: transparent;
+      margin-top: 20px;
+    }
+    &::-webkit-scrollbar-track-piece:end {
+      background: transparent;
+      margin-bottom: 20px;
+    }
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    max-width: 90%;
+    background-color: white;
+    border-radius: 20px;
+    animation: 0.2s scaling;
+    .closeModalBtn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      padding: 0;
+      border: none;
+      color: $green;
+      background-color: transparent;
+      cursor: pointer;
+      font: inherit;
+      transition: opacity 0.3s;
+      &:hover {
+        opacity: 0.5;
+      }
+    }
+    @keyframes scaling {
+      from {
+        transform: translate(-50%, -50%) scale(0);
+      }
+      to {
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+  }
+}
+
+.authWrap,
+.editWrap {
+  padding: 45px;
+  box-sizing: border-box;
+  width: 100%;
+  @media (max-width: 500px) {
+    padding: 45px 20px 20px 20px;
+  }
+}
+.authModalBtns {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  justify-items: center;
+  align-items: center;
+  position: relative;
+  font-size: 17px;
+}
+.authModalBtnActive {
+  position: relative;
+  color: $green;
+  &:before {
+    position: absolute;
+    content: '';
+    bottom: -10px;
+    left: -25%;
+    width: 150%;
+    height: 3px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    background-color: $green;
+    animation: 0.15s linear width;
+  }
+
+  @keyframes width {
+    0% {
+      width: 0;
+      left: 25%;
+    }
+    100% {
+      color: $green;
+      width: 150%;
+    }
+  }
+}
+
+.authForm,
+.editForm {
+  width: 100%;
+}
+
+.title {
+  font-size: 36px;
+  font-weight: 700;
+  margin-top: 30px;
+}
+
+.editForm {
+  .title {
+    font-size: 36px;
+    font-weight: 700;
+    margin-top: 0;
+  }
+}
+.subtitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 10px;
+}
+.container {
+  height: 50px;
+  position: relative;
+  width: 100%;
+  margin-top: 40px;
+  .placeholder {
+    text-align: center;
+    font-weight: 400 !important;
+    color: #a9a9a9;
+    font-family: sans-serif;
+    left: 20px;
+    font-size: 16px !important;
+    line-height: 14px;
+    pointer-events: none;
+    position: absolute;
+    transform-origin: 0 50%;
+    transition: transform 200ms, color 200ms;
+    top: 20px;
+  }
+  .formEye {
+    position: absolute;
+    top: 50%;
+    right: 5px;
+    transform: translate(-5px, -50%);
+    display: flex;
+    align-items: center;
+  }
+}
+.fileInput::file-selector-button {
+  margin-right: 20px;
+  border: none;
+  background: $green;
+  padding: 10px 20px;
+  border-radius: 10px;
+  color: $white;
+  cursor: pointer;
+  transition: opacity 0.2s ease-in-out;
+  &:hover {
+    opacity: 0.7;
+  }
+}
+
+.input {
+  background-color: #eee;
+  border-radius: 12px;
+  border: 0;
+  box-sizing: border-box;
+  color: black;
+  font-size: 18px !important;
+  height: inherit;
+  outline: 0;
+  padding: 4px 40px 0px 20px;
+  width: 100%;
+
+  &.error {
+    border: 1px solid red;
+  }
+  &:focus ~ .cut,
+  &:not(:placeholder-shown) ~ .cut {
+    transform: translateY(8px);
+  }
+  &:focus ~ .placeholder,
+  &:not(:placeholder-shown) ~ .placeholder {
+    transform: translateY(-30px) translateX(10px) scale(0.75);
+  }
+
+  &:not(:placeholder-shown) ~ .placeholder {
+    color: #808097;
+  }
+
+  &:focus ~ .placeholder {
+    color: $green;
+  }
+}
+
+.cut {
+  background-color: white;
+  border-radius: 10px;
+  height: 20px;
+  left: 20px;
+  position: absolute;
+  top: -20px;
+  transform: translateY(0);
+  transition: transform 200ms;
+  width: 76px;
+}
+.submit {
+  background-color: $green;
+  border-radius: 12px;
+  border: 0;
+  box-sizing: border-box;
+  color: $white;
+  cursor: pointer;
+  font-size: 18px;
+  height: 50px;
+  margin-top: 38px;
+  text-align: center;
+  width: 100%;
+  transition: transform 0.2s;
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.authMsg {
+  width: 100%;
+  padding: 0px 20px;
+  box-sizing: border-box;
+  font-weight: 300;
+  font-size: 38px;
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: 0.4s linear slidein;
+  @media (max-width: 585px) {
+    font-size: 32px;
+  }
+  @keyframes slidein {
+    from {
+      transform: translate(-50%, -10%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(-50%, -50%);
+      opacity: 1;
+    }
+  }
+}
+
+.todosWrap {
+  padding: 30px;
+  margin-top: 65px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  justify-items: center;
+  grid-gap: 50px;
+  .searchWrap {
+    margin: 0 0 15px 0;
+  }
+  @media (max-width: 1175px) {
+    margin-top: 130px;
+  }
+  @media (max-width: 775px) {
+    margin-top: 185px;
+  }
+}
+
+.todolist {
+  width: 300px;
+}
+
+.todoHlBlock {
+  font-weight: 700;
+  display: grid;
+  grid-template-columns: 9fr 1fr;
+  align-items: center;
+  margin: 0 0 15px 0;
+  div > div > div:nth-child(1) {
+    font-size: 20px;
+  }
+  .btnRemoveTodo {
+    justify-self: center;
+    display: flex;
+    align-items: center;
+    color: $green;
+    cursor: pointer;
+    transition: opacity 0.25s;
+    &:hover {
+      opacity: 0.5;
+    }
+  }
+}
+
+.searchWrap {
+  position: relative;
+  width: 100%;
+  height: 40px;
+  box-shadow: $white-shadow;
+  border-radius: 10px;
+  box-sizing: border-box;
+  padding: 5px;
+  .searchBar {
+    width: 85%;
+    height: 30px;
+    outline: none;
+    border: 0px solid white;
+    font-size: 16px;
+    text-indent: 5px;
+    &:focus ~ .magnifier {
+      opacity: 1;
+      pointer-events: auto;
+      right: 0%;
+    }
+  }
+  .magnifier {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    z-index: 2;
+    right: -10%;
+    height: inherit;
+    border: 0;
+    background-color: rgba(0, 0, 0, 0);
+    transition: 0.25s;
+    pointer-events: none;
+    &::before {
+      position: absolute;
+      content: '';
+      top: 15%;
+      left: 0%;
+      height: 70%;
+      width: 1px;
+      background-color: $green;
+    }
+    .magnifierAlign {
+      display: flex;
+      align-items: center;
+      color: black;
+    }
+  }
+}
+
+.addTask {
+  width: 100%;
+  box-sizing: border-box;
+  height: 40px;
+  outline: none;
+  text-indent: 5px;
+  border: 1px solid white;
+  box-shadow: $white-shadow;
+  border-radius: 10px;
+  margin: 0 0 5px 0;
+  padding: 5px;
+  font-size: 16px;
+  &:focus {
+    border: 1px solid $green;
+  }
+  &.error {
+    border: red 1px solid;
+  }
+}
+
+.error-message {
+  font-size: 14px !important;
+  color: red;
+  font-weight: 400 !important;
+}
+
+.taskLinesUl {
+  margin: 0;
+  padding: 0;
+}
+
+.taskLine {
+  overflow: hidden;
+  min-height: 40px;
+  margin: 10px 0;
+  padding: 5px;
+  list-style-type: none;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 1fr 9fr 1fr;
+  align-items: center;
+  box-shadow: $white-shadow;
+  border-radius: 10px;
+  position: relative;
+  &::after {
+    content: '';
+    height: 100%;
+    width: 100%;
+    background: rgba(255, 255, 255, 0);
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+  }
+  &.done {
+    box-shadow: $white-shadow;
+    &::after {
+      background: rgba(256, 256, 256, 0.5);
+    }
+  }
+  .taskLineCheckBox {
+    justify-self: flex-start;
+    display: block;
+    position: relative;
+    padding-left: 30px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    & input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      height: 0;
+      width: 0;
+    }
+    .checkmark {
+      position: absolute;
+      top: 0;
+      margin-top: -7.5px;
+      border: 1px solid #ccc;
+      left: 5.5px;
+      height: 15px;
+      border-radius: 3px;
+      width: 15px;
+      background-color: inherit;
+      transition: border-color 0.2s;
+    }
+    /* On mouse-over, add a grey background color */
+    &:hover input ~ .checkmark {
+      border-color: #aaa;
+    }
+    /* When the checkbox is checked, add a blue background */
+    & input:checked ~ .checkmark {
+      border-color: transparent;
+      background-color: $green;
+    }
+    /* Create the checkmark/indicator (hidden when not checked) */
+    .checkmark:after {
+      content: '';
+      position: absolute;
+      display: none;
+    }
+    /* Show the checkmark when checked */
+    & input:checked ~ .checkmark:after {
+      display: block;
+    }
+    /* Style the checkmark/indicator */
+    & .checkmark:after {
+      left: 4.5px;
+      top: 1px;
+      width: 4px;
+      height: 9px;
+      border: solid $white;
+      border-width: 0 2px 2px 0;
+      -webkit-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+      transform: rotate(45deg);
+    }
+  }
+}
+
+.taskBody {
+  .taskBodyInput {
+    width: inherit;
+    font-weight: inherit;
+    font-size: inherit;
+    display: block;
+    border: none;
+    outline: none;
+    background: none;
+    box-sizing: border-box;
+  }
+  .taskBodyText {
+    width: inherit;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .taskBodyTextTitle {
+      cursor: pointer;
+      &.todo {
+        cursor: default;
+      }
+    }
+    .btnEditBodyText {
+      cursor: pointer;
+      transition: opacity 0.2s;
+      &:hover {
+        opacity: 0.5;
+      }
+    }
+  }
+}
+
+.btnDelTask {
+  padding: 0;
+  justify-self: flex-end;
+  border: none;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font: inherit;
+  color: $green;
+  background-color: transparent;
+  transition: opacity 0.2s;
+  &:hover {
+    opacity: 0.5;
+  }
+}
+
+.filters {
+  display: flex;
+  justify-content: space-between;
+  width: 60%;
+  margin: 10px auto 15px auto;
+  .filter {
+    position: relative;
+    display: block;
+    padding: 0;
+    border: none;
+    font-size: 16px;
+    background-color: transparent;
+    &.active {
+      &:before {
+        position: absolute;
+        content: '';
+        bottom: -3px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        animation: 0.15s linear width1;
+        background-color: $green;
+      }
+      @keyframes width1 {
+        0% {
+          width: 0;
+        }
+        100% {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
+
+.showWrap {
+  height: inherit;
+  box-sizing: border-box;
+  .taskDate {
+    padding: 45px 45px 20px 45px;
+    position: relative;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    .bgDimmer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(180deg, rgb(0, 0, 0, 0.1) 0%, rgb(0, 0, 0, 0.4) 100%);
+    }
+    @media (max-width: 500px) {
+      padding: 45px 20px 20px 20px;
+    }
+    .dateHl {
+      display: flex;
+      gap: 10px;
+      font-size: 36px;
+      font-weight: 700;
+      .dayMonth {
+        color: $green;
+        font-weight: 400;
+      }
+    }
+    .year {
+      color: $green;
+      font-weight: 400;
+    }
+  }
+  .divider {
+    width: 100%;
+    border-bottom: 1px solid #65657b;
+  }
+  .show {
+    margin-top: 10px;
+    padding: 0px 45px;
+    @media (max-width: 500px) {
+      padding: 0 20px;
+    }
+  }
+  .images {
+    padding-bottom: 10px;
+    .image {
+      object-fit: cover;
+      box-shadow: inset 0 0 0.5px 1px hsla(0, 0%, 100%, 0.075),
+        /* shadow ring 👇 */ 0 0 0 1px hsla(0, 0%, 0%, 0.05),
+        /* multiple soft shadows 👇 */ 0 0.3px 0.4px hsla(0, 0%, 0%, 0.02),
+        0 0.9px 1.5px hsla(0, 0%, 0%, 0.045), 0 3.5px 6px hsla(0, 0%, 0%, 0.09);
+      width: 100%;
+      height: 300px;
+      display: block;
+      margin: 20px 0;
+      border-radius: 10px;
+    }
+  }
+}
